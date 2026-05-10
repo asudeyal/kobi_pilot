@@ -223,13 +223,21 @@
             });
         }
 
-        function clearChat() {
+        async function clearChat() {
             const messagesDiv = document.getElementById("messages");
             messagesDiv.innerHTML = "";
             const welcomeText = currentRole === "Müşteri" 
                 ? "Merhaba! Ben KOBİ-Pilot. Size nasıl yardımcı olabilirim?" 
                 : "Hoş geldin Yönetici. Sistemler aktif, komutlarını bekliyorum.";
             addMessage(welcomeText, "ai-message");
+
+            // İŞTE SİHİR BURADA: Arka plandaki yapay zekanın beynini de sıfırlıyoruz!
+            try {
+                await fetch("/api/temizle");
+                console.log("Arka plan hafızası sıfırlandı, token yükü hafifledi.");
+            } catch (error) {
+                console.error("Hafıza sıfırlanırken hata:", error);
+            }
         }
 
         function toggleRole() {
@@ -313,3 +321,5 @@
     </script>
 </body>
 </html>
+
+

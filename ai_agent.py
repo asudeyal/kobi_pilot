@@ -143,3 +143,8 @@ def ai_yanit_ver(kullanici_mesaji: str, rol: str) -> str:
     mesaj_formati = f"[{rol.upper()}] {kullanici_mesaji}"
     response = chat.send_message(mesaj_formati)
     return response.text
+
+def sohbet_gecmisini_temizle():
+    global chat
+    chat = client.chats.create(model="gemini-2.5-flash", config=config)
+    return "Hafıza sıfırlandı."

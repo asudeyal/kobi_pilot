@@ -50,3 +50,8 @@ def get_dashboard_data():
 def sohbet_et(istek: MesajIstegi):
     cevap = ai_yanit_ver(istek.mesaj, istek.rol)
     return {"ai_cevabi": cevap}
+
+@app.get("/api/temizle")
+def hafizayi_temizle():
+    sohbet_gecmisini_temizle()
+    return {"mesaj": "Sohbet hafızası başarıyla temizlendi."}
