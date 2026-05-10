@@ -11,10 +11,10 @@
     
     <style>
         :root {
-            --bg-color: #f0f2f5; --chat-bg: #ffffff; --primary: #2563eb; --text-main: #1e293b;
+            --bg-color: #f0f2f5; --chat-bg: #ffffff; --primary: #2563eb; --text-main: #1e293b; --ai-text: #334155; --ai-bold: #1d4ed8;
         }
         body.patron-mode {
-            --bg-color: #020617; --chat-bg: #0f172a; --primary: #3b82f6; --text-main: #f8fafc;
+            --bg-color: #020617; --chat-bg: #0f172a; --primary: #3b82f6; --text-main: #f8fafc; --ai-text: #cbd5e1; --ai-bold: #38bdf8;
         }
         body { 
             font-family: 'Inter', sans-serif; background-color: var(--bg-color); 
@@ -29,7 +29,7 @@
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid rgba(255,255,255,0.05);
         }
-        body.patron-mode #app-wrapper { width: 1000px; }
+        body.patron-mode #app-wrapper { width: 1150px; }
 
         /* --- SOL PANEL: DASHBOARD --- */
         #dashboard-panel {
@@ -37,31 +37,61 @@
             padding: 0; overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border-right: 1px solid #1e293b;
         }
-        body.patron-mode #dashboard-panel { width: 450px; padding: 30px; }
+        body.patron-mode #dashboard-panel { width: 480px; padding: 25px; }
 
-        .dash-title { font-size: 1.4em; font-weight: 700; margin-bottom: 30px; color: #38bdf8; display: flex; align-items: center; gap: 10px;}
+        .dash-title { font-size: 1.3em; font-weight: 700; margin-bottom: 25px; color: #38bdf8; display: flex; align-items: center; gap: 10px;}
         
-        .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: #1e293b; border-radius: 16px; padding: 20px; border-top: 4px solid #3b82f6;}
+        .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #1e293b; border-radius: 16px; padding: 18px; border-top: 4px solid #3b82f6;}
         .stat-card.alert { border-top-color: #ef4444; background: #2a1515;}
-        .stat-title { font-size: 0.85em; color: #94a3b8; font-weight: 600; text-transform: uppercase;}
-        .stat-value { font-size: 2.5em; font-weight: 700; color: white; margin: 10px 0; display: flex; align-items: center; justify-content: space-between;}
-        .stat-icon { color: rgba(255,255,255,0.1); font-size: 1.2em; }
-        .stat-desc { font-size: 0.8em; color: #cbd5e1; line-height: 1.4;}
+        .stat-title { font-size: 0.8em; color: #94a3b8; font-weight: 600; text-transform: uppercase;}
+        .stat-value { font-size: 2.2em; font-weight: 700; color: white; margin: 8px 0; display: flex; align-items: center; justify-content: space-between;}
+        .stat-icon { color: rgba(255,255,255,0.1); font-size: 1.1em; }
+        .stat-desc { font-size: 0.75em; color: #cbd5e1; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;}
 
-        .chart-container { background: #1e293b; border-radius: 16px; padding: 20px; flex: 1; min-height: 250px; position: relative;}
+        .chart-container { background: #1e293b; border-radius: 16px; padding: 20px; flex: 1; min-height: 220px; position: relative;}
 
         /* --- SAĞ PANEL: CHAT --- */
-        #chat-panel { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); transition: all 0.4s ease; }
+        #chat-panel { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); transition: all 0.4s ease; min-width: 0;}
+        
         #header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 1.1em; border-bottom: 1px solid rgba(128,128,128,0.2); }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .icon-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.2em; cursor: pointer; opacity: 0.5; transition: 0.3s; padding: 5px; }
+        .icon-btn:hover { opacity: 1; color: #ef4444; }
+
         #role-btn { background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: 0.3s; }
         body.patron-mode #role-btn { background: #ef4444; }
+        
         #messages { padding: 25px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
         .message { padding: 16px 20px; border-radius: 18px; max-width: 85%; font-size: 0.95em; line-height: 1.5; }
         .user-message { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .ai-message { background: rgba(128,128,128,0.1); align-self: flex-start; border-bottom-left-radius: 4px; }
+        
+        /* --- YENİ: YAPAY ZEKA METİN STİLLERİ (DAHA ŞIK VE OKUNABİLİR) --- */
+        .ai-message { background: rgba(128,128,128,0.08); align-self: flex-start; border-bottom-left-radius: 4px; color: var(--ai-text); }
         .ai-message p { margin: 0 0 10px 0; } .ai-message p:last-child { margin: 0; }
-        #input-area { display: flex; padding: 20px; gap: 10px; border-top: 1px solid rgba(128,128,128,0.2); }
+        .ai-message strong { color: var(--ai-bold); font-weight: 600; } /* Kalın yazılar temaya uygun renklendi */
+        .ai-message ul { padding-left: 20px; margin-top: 10px; margin-bottom: 10px; }
+        .ai-message li { margin-bottom: 8px; } /* Liste elemanları arasına boşluk eklendi */
+        
+        /* YENİ: DİNAMİK ROZET (BADGE) TASARIMLARI */
+        .badge-alert { background-color: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(239, 68, 68, 0.3); margin-left: 5px; vertical-align: middle;}
+        .badge-success { background-color: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .typing-indicator { padding: 12px 20px !important; display: flex; gap: 4px; align-items: center; width: fit-content; }
+        .typing-indicator span { display: inline-block; width: 6px; height: 6px; background-color: var(--text-main); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; opacity: 0.6;}
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        #chips-area { padding: 12px 20px; display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; border-top: 1px solid rgba(128,128,128,0.1);}
+        #chips-area::-webkit-scrollbar { height: 6px; }
+        #chips-area::-webkit-scrollbar-track { background: transparent; }
+        #chips-area::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.2); border-radius: 10px; }
+        #chips-area::-webkit-scrollbar-thumb:hover { background: rgba(128,128,128,0.4); }
+        .chip { background: rgba(128,128,128,0.06); border: 1px solid rgba(128,128,128,0.2); border-radius: 16px; padding: 8px 14px; font-size: 0.85em; color: var(--text-main); cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif;}
+        .chip:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        #input-area { display: flex; padding: 10px 20px 20px; gap: 10px; }
         #user-input { flex: 1; padding: 15px 20px; border: 1px solid rgba(128,128,128,0.3); border-radius: 25px; outline: none; background: transparent; color: var(--text-main); }
         #send-btn { padding: 0 25px; background: var(--primary); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; }
         ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
@@ -72,7 +102,6 @@
     <div id="app-wrapper">
         <div id="dashboard-panel">
             <div class="dash-title"><i class="fas fa-chart-pie"></i> Copilot Dashboard</div>
-            
             <div class="cards-grid">
                 <div class="stat-card">
                     <div class="stat-title">Bekleyen Kargo</div>
@@ -82,10 +111,9 @@
                 <div class="stat-card alert">
                     <div class="stat-title">Kritik Stok</div>
                     <div class="stat-value"><span id="dash-critical-count">0</span> <i class="fas fa-exclamation-triangle stat-icon"></i></div>
-                    <div class="stat-desc" id="dash-critical-list">-</div>
+                    <div class="stat-desc" id="dash-critical-list" title="Detaylı görmek için üzerine gelin">-</div>
                 </div>
             </div>
-
             <div class="chart-container">
                 <canvas id="orderChart"></canvas>
             </div>
@@ -94,11 +122,18 @@
         <div id="chat-panel">
             <div id="header">
                 <span id="header-title"><i class="fas fa-headset"></i> Müşteri Destek</span>
-                <button id="role-btn" onclick="toggleRole()"><i class="fas fa-crown"></i> Patron Modu</button>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="clearChat()" title="Sohbeti Temizle"><i class="fas fa-trash-can"></i></button>
+                    <button id="role-btn" onclick="toggleRole()"><i class="fas fa-user-tie"></i> Yönetici Modu</button>
+                </div>
             </div>
+            
             <div id="messages">
                 <div class="message ai-message">Merhaba! Ben KOBİ-Pilot. Size nasıl yardımcı olabilirim?</div>
             </div>
+            
+            <div id="chips-area"></div>
+            
             <div id="input-area">
                 <input type="text" id="user-input" placeholder="Yapay zekaya yazın..." onkeypress="handleKeyPress(event)" autocomplete="off">
                 <button id="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
@@ -111,6 +146,22 @@
         let currentRole = "Müşteri";
         let orderChart; 
 
+        const musteriChips = [
+            "🛍️ Neler satıyorsunuz?", 
+            "📦 Sipariş durumumu sorgula", 
+            "❓ Bir ürünün stoğunu sor", 
+            "🔄 Siparişimi iptal etmek istiyorum"
+        ];
+        const patronChips = [
+            "📊 Satış analiz raporu ver", 
+            "➕ Sisteme yeni ürün ekle", 
+            "📈 Bir ürünün stoğunu güncelle", 
+            "🚚 Bir siparişi kargoya ver",
+            "✅ Bir siparişi teslim edildi işaretle"
+        ];
+
+        window.onload = () => { renderChips(); };
+
         function initChart() {
             const ctx = document.getElementById('orderChart').getContext('2d');
             Chart.defaults.color = '#94a3b8';
@@ -121,13 +172,12 @@
                     datasets: [{
                         data: [0, 0, 0, 0],
                         backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'],
-                        borderWidth: 0,
-                        cutout: '75%'
+                        borderWidth: 0, cutout: '70%'
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { padding: 20, font: {size: 12} } } } 
+                    plugins: { legend: { position: 'right', labels: { padding: 15, font: {size: 11} } } } 
                 }
             });
         }
@@ -140,7 +190,10 @@
                 
                 document.getElementById("dash-orders").innerText = data.bekleyen_siparis;
                 document.getElementById("dash-critical-count").innerText = data.kritik_stok_sayisi;
-                document.getElementById("dash-critical-list").innerText = data.kritik_stok_urunler || "Tüm stoklar yeterli";
+                
+                const criticalList = document.getElementById("dash-critical-list");
+                criticalList.innerText = data.kritik_stok_urunler || "Tüm stoklar yeterli";
+                criticalList.title = data.kritik_stok_urunler || "Tüm stoklar yeterli";
                 
                 if(!orderChart) initChart();
                 orderChart.data.datasets[0].data = [
@@ -153,19 +206,48 @@
             } catch (err) { console.error(err); }
         }
 
+        function renderChips() {
+            const container = document.getElementById("chips-area");
+            container.innerHTML = "";
+            const chips = currentRole === "Müşteri" ? musteriChips : patronChips;
+            
+            chips.forEach(chipText => {
+                const btn = document.createElement("button");
+                btn.className = "chip";
+                btn.innerText = chipText;
+                btn.onclick = () => {
+                    document.getElementById("user-input").value = chipText;
+                    sendMessage();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function clearChat() {
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML = "";
+            const welcomeText = currentRole === "Müşteri" 
+                ? "Merhaba! Ben KOBİ-Pilot. Size nasıl yardımcı olabilirim?" 
+                : "Hoş geldin Yönetici. Sistemler aktif, komutlarını bekliyorum.";
+            addMessage(welcomeText, "ai-message");
+        }
+
         function toggleRole() {
             if (currentRole === "Müşteri") {
-                currentRole = "Patron";
+                currentRole = "Patron"; 
                 document.body.classList.add("patron-mode");
                 document.getElementById("header-title").innerHTML = "<i class='fas fa-robot'></i> AI Yönetim Merkezi";
                 document.getElementById("role-btn").innerHTML = "<i class='fas fa-user'></i> Müşteri Modu";
+                renderChips();
                 setTimeout(fetchDashboard, 300); 
             } else {
                 currentRole = "Müşteri";
                 document.body.classList.remove("patron-mode");
                 document.getElementById("header-title").innerHTML = "<i class='fas fa-headset'></i> Müşteri Destek";
-                document.getElementById("role-btn").innerHTML = "<i class='fas fa-crown'></i> Patron Modu";
+                document.getElementById("role-btn").innerHTML = "<i class='fas fa-user-tie'></i> Yönetici Modu";
+                renderChips();
             }
+            clearChat(); 
         }
 
         async function sendMessage() {
@@ -178,9 +260,11 @@
             
             const messagesDiv = document.getElementById("messages");
             const loadingDiv = document.createElement("div");
-            loadingDiv.className = "message ai-message loading";
+            
+            loadingDiv.className = "message ai-message typing-indicator";
             loadingDiv.id = "loading-text";
-            loadingDiv.innerHTML = "<i class='fas fa-circle-notch fa-spin'></i> İşlem Yapılıyor...";
+            loadingDiv.innerHTML = "<span></span><span></span><span></span>";
+            
             messagesDiv.appendChild(loadingDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
@@ -201,11 +285,26 @@
             }
         }
 
+        /* YENİ: KELİME YAKALAYICI (INTERCEPTOR) VE STİL EKLEYİCİ */
         function addMessage(text, className) {
             const messagesDiv = document.getElementById("messages");
             const msgDiv = document.createElement("div");
             msgDiv.className = `message ${className}`;
-            msgDiv.innerHTML = className.includes("ai-message") ? marked.parse(text) : text;
+            
+            if (className.includes("ai-message")) {
+                let parsedText = marked.parse(text);
+                
+                // Kuru metinleri HTML rozetlere (badge) çeviriyoruz
+                parsedText = parsedText.replace(/\[KRİTİK STOK UYARISI!\]/g, '<span class="badge-alert"><i class="fas fa-exclamation-triangle"></i> Kritik Stok</span>');
+                parsedText = parsedText.replace(/BAŞARILI:/g, '<span class="badge-success"><i class="fas fa-check-circle"></i> Başarılı:</span>');
+                parsedText = parsedText.replace(/HATA:/g, '<span class="badge-alert"><i class="fas fa-times-circle"></i> Hata:</span>');
+                parsedText = parsedText.replace(/İPTAL REDDEDİLDİ:/g, '<span class="badge-alert"><i class="fas fa-ban"></i> İptal Reddedildi:</span>');
+                
+                msgDiv.innerHTML = parsedText;
+            } else {
+                msgDiv.innerHTML = text; // Kullanıcı mesajları düz metin kalsın
+            }
+            
             messagesDiv.appendChild(msgDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
