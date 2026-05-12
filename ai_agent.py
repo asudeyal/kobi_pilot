@@ -58,6 +58,24 @@ def satis_analizi_yap() -> str:
     db.close()
     return rapor
 
+def satis_analizi_csv() -> str:
+    db = SessionLocal()
+    siparisler = db.query(models.Order).all()
+    urunler = db.query(models.Product).all()
+    satis_miktarlari = {}
+    for s in siparisler:
+        satis_miktarlari[s.product_id] = satis_miktarlari.get(s.product_id, 0) + 1
+
+    rows = [["Ürün", "Toplam Sipariş", "Güncel Stok", "Durum"]]
+    for u in urunler:
+        satis = satis_miktarlari.get(u.id, 0)
+        durum = "KRİTİK STOK" if u.stock_quantity <= 5 else ""
+        rows.append([u.name, str(satis), str(u.stock_quantity), durum])
+
+    db.close()
+    csv_lines = [",".join(f'"{cell}"' for cell in row) for row in rows]
+    return "\ufeff" + "\n".join(csv_lines)
+
 def urun_ekle(urun_adi: str, stok_miktari: int) -> str:
     db = SessionLocal()
     yeni_urun = models.Product(name=urun_adi, stock_quantity=stok_miktari)

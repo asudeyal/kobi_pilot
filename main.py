@@ -1,10 +1,10 @@
 # main.py
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from pydantic import BaseModel
 import models
 from database import engine, SessionLocal
-from ai_agent import ai_yanit_ver
+import ai_agent
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -48,5 +48,16 @@ def get_dashboard_data():
 
 @app.post("/sohbet")
 def sohbet_et(istek: MesajIstegi):
-    cevap = ai_yanit_ver(istek.mesaj, istek.rol)
-    return {"ai_cevabi": cevap}
+    cevap = ai_agent.ai_yanit_ver(istek.mesaj, istek.rol)
+    mesaj_lower = istek.mesaj.lower()
+    rapor_durum = any(keyword in mesaj_lower for keyword in ["satış analiz", "satış raporu", "satis analiz", "satis raporu"])
+    return {"ai_cevabi": cevap, "rapor_durum": rapor_durum}
+
+@app.get("/api/sales-report")
+def get_sales_report_csv():
+    csv_content = ai_agent.satis_analizi_csv()
+    return PlainTextResponse(
+        content=csv_content,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=\"satis_raporu.csv\""}
+    )
