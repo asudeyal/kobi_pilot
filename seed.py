@@ -21,6 +21,14 @@ def seed_data():
     db.add_all([o1, o2])
     db.commit()
     db.close()
+
+    # 3. YENİ: Test Kullanıcılarını Oluştur
+    admin_kullanici = User(username="admin", password="123", role="patron")
+    test_musteri = User(username="test", password="123", role="musteri")
+    
+    db.add_all([admin_kullanici, test_musteri])
+    db.commit()
+    db.close()
     
     print("Harika! Sahte veriler veritabanına başarıyla eklendi!")
 

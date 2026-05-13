@@ -58,6 +58,48 @@ def satis_analizi_yap() -> str:
     db.close()
     return rapor
 
+def tarih_bazli_rapor_getir(zaman_dilimi: str) -> str:
+    """Belirli bir zaman dilimi ('bugun', 'bu_hafta', 'bu_ay', 'tumu') için satış analiz raporu getirir."""
+    db = SessionLocal()
+    from datetime import datetime, timedelta
+    now = datetime.utcnow()
+    
+    query = db.query(models.Order)
+    if zaman_dilimi == "bugun":
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start)
+    elif zaman_dilimi == "bu_hafta" or zaman_dilimi == "bu-hafta":
+        start = now - timedelta(days=now.weekday())
+        start = start.replace(hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start)
+    elif zaman_dilimi == "bu_ay" or zaman_dilimi == "bu-ay":
+        start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start)
+    else:
+        zaman_dilimi = "tumu"
+
+    siparisler = query.all()
+    urunler = db.query(models.Product).all()
+    urun_isimleri = {u.id: u.name for u in urunler}
+    
+    satis_miktarlari = {}
+    for s in siparisler:
+        satis_miktarlari[s.product_id] = satis_miktarlari.get(s.product_id, 0) + 1
+
+    toplam_satis = len(siparisler)
+    rapor = f"ZAMAN BAZLI SATIŞ ANALİZİ ({zaman_dilimi}):\n"
+    rapor += f"Bu dönemde toplam {toplam_satis} sipariş alındı.\n\n"
+    
+    for urun_id, miktar in satis_miktarlari.items():
+        isim = urun_isimleri.get(urun_id, f"Ürün {urun_id}")
+        rapor += f"- {isim}: {miktar} adet satıldı.\n"
+        
+    db.close()
+    
+    html_button = f'<br><br><a href="/api/export/orders?period={zaman_dilimi}" target="_blank" style="display:inline-block; padding:10px 15px; background-color:#10b981; color:white; text-decoration:none; border-radius:8px; font-weight:bold; font-family:sans-serif;">📥 Raporu CSV Olarak İndir</a>'
+    return rapor + html_button
+
+
 def urun_ekle(urun_adi: str, stok_miktari: int) -> str:
     db = SessionLocal()
     yeni_urun = models.Product(name=urun_adi, stock_quantity=stok_miktari)
@@ -117,6 +159,7 @@ def siparis_iptal_et(siparis_id: int) -> str:
 sistem_yonergesi = """Sen KOBİ-Pilot adında otonom bir işletme asistanısın.
 
 - [PATRON] ETİKETİ VARSA: İşletme sahibisin. Ürün ekle, analiz yap, stok güncelle, sipariş durumlarını değiştir.
+Eğer kullanıcı siparişleri/raporları indirmek isterse, KESİNLİKLE 'tarih_bazli_rapor_getir' aracını kullan ve kullanıcıya indirme linkini sun. 'Bunu yapamam' deme!
 
 - [MÜŞTERİ] ETİKETİ VARSA: Harika bir satış danışmanı ve müşteri temsilcisisin.
   1) Müşteri tavsiye veya ürün sorarsa KESİNLİKLE 'katalog_getir' aracını kullanıp uygun ürünleri pazarlayarak öner.
@@ -126,7 +169,7 @@ sistem_yonergesi = """Sen KOBİ-Pilot adında otonom bir işletme asistanısın.
 
 tum_araclar = [
     stok_sorgula, siparis_sorgula, siparis_durumu_guncelle, 
-    satis_analizi_yap, urun_ekle, stok_guncelle, 
+    satis_analizi_yap, tarih_bazli_rapor_getir, urun_ekle, stok_guncelle, 
     katalog_getir, siparis_iptal_et
 ]
 
@@ -143,3 +186,8 @@ def ai_yanit_ver(kullanici_mesaji: str, rol: str) -> str:
     mesaj_formati = f"[{rol.upper()}] {kullanici_mesaji}"
     response = chat.send_message(mesaj_formati)
     return response.text
+
+def sohbet_gecmisini_temizle():
+    global chat
+    chat = client.chats.create(model="gemini-2.5-flash", config=config)
+    return "Hafıza sıfırlandı."

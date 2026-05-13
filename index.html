@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,109 +9,736 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <style>
         :root {
-            --bg-color: #f0f2f5; --chat-bg: #ffffff; --primary: #2563eb; --text-main: #1e293b; --ai-text: #334155; --ai-bold: #1d4ed8;
+            --bg-color: #f0f2f5;
+            --chat-bg: #ffffff;
+            --primary: #2563eb;
+            --text-main: #1e293b;
+            --ai-text: #334155;
+            --ai-bold: #1d4ed8;
         }
+
         body.patron-mode {
-            --bg-color: #020617; --chat-bg: #0f172a; --primary: #3b82f6; --text-main: #f8fafc; --ai-text: #cbd5e1; --ai-bold: #38bdf8;
+            --bg-color: #020617;
+            --chat-bg: #0f172a;
+            --primary: #3b82f6;
+            --text-main: #f8fafc;
+            --ai-text: #cbd5e1;
+            --ai-bold: #38bdf8;
         }
-        body { 
-            font-family: 'Inter', sans-serif; background-color: var(--bg-color); 
-            display: flex; justify-content: center; align-items: center; 
-            height: 100vh; margin: 0; transition: background-color 0.4s ease; color: var(--text-main);
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.4s ease;
+            color: var(--text-main);
         }
 
         #app-wrapper {
-            display: flex; width: 550px; height: 90vh; min-height: 650px;
-            background: var(--chat-bg); border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden;
+            display: none;
+            width: 550px;
+            height: 90vh;
+            min-height: 650px;
+            background: var(--chat-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        body.patron-mode #app-wrapper { width: 1150px; }
+
+        body.patron-mode #app-wrapper {
+            width: 1150px;
+        }
 
         /* --- SOL PANEL: DASHBOARD --- */
         #dashboard-panel {
-            width: 0; background: #0b1121; display: flex; flex-direction: column;
-            padding: 0; overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0;
+            background: #0b1121;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border-right: 1px solid #1e293b;
         }
-        body.patron-mode #dashboard-panel { width: 480px; padding: 25px; }
 
-        .dash-title { font-size: 1.3em; font-weight: 700; margin-bottom: 25px; color: #38bdf8; display: flex; align-items: center; gap: 10px;}
-        
-        .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: #1e293b; border-radius: 16px; padding: 18px; border-top: 4px solid #3b82f6;}
-        .stat-card.alert { border-top-color: #ef4444; background: #2a1515;}
-        .stat-title { font-size: 0.8em; color: #94a3b8; font-weight: 600; text-transform: uppercase;}
-        .stat-value { font-size: 2.2em; font-weight: 700; color: white; margin: 8px 0; display: flex; align-items: center; justify-content: space-between;}
-        .stat-icon { color: rgba(255,255,255,0.1); font-size: 1.1em; }
-        .stat-desc { font-size: 0.75em; color: #cbd5e1; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;}
+        body.patron-mode #dashboard-panel {
+            width: 480px;
+            padding: 25px;
+        }
 
-        .chart-container { background: #1e293b; border-radius: 16px; padding: 20px; flex: 1; min-height: 220px; position: relative;}
+        .dash-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 18px;
+            border-top: 4px solid #3b82f6;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card.alert {
+            border-top-color: #ef4444;
+            background: #2a1515;
+        }
+
+        .stat-title {
+            font-size: 0.8em;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: white;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-icon {
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 1.1em;
+        }
+
+        .stat-desc {
+            font-size: 0.75em;
+            color: #cbd5e1;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .chart-container {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            flex: 1;
+            min-height: 220px;
+            position: relative;
+        }
 
         /* --- SAĞ PANEL: CHAT --- */
-        #chat-panel { flex: 1; display: flex; flex-direction: column; background: var(--chat-bg); transition: all 0.4s ease; min-width: 0;}
-        
-        #header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 1.1em; border-bottom: 1px solid rgba(128,128,128,0.2); }
-        .header-actions { display: flex; align-items: center; gap: 12px; }
-        .icon-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.2em; cursor: pointer; opacity: 0.5; transition: 0.3s; padding: 5px; }
-        .icon-btn:hover { opacity: 1; color: #ef4444; }
+        #chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--chat-bg);
+            transition: all 0.4s ease;
+            min-width: 0;
+        }
 
-        #role-btn { background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: 0.3s; }
-        body.patron-mode #role-btn { background: #ef4444; }
-        
-        #messages { padding: 25px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .message { padding: 16px 20px; border-radius: 18px; max-width: 85%; font-size: 0.95em; line-height: 1.5; }
-        .user-message { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        
+        #header {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.2em;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: 0.3s;
+            padding: 5px;
+        }
+
+        .icon-btn:hover {
+            opacity: 1;
+            color: #ef4444;
+        }
+
+        #role-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        body.patron-mode #role-btn {
+            background: #ef4444;
+        }
+
+        #messages {
+            padding: 25px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 18px;
+            max-width: 85%;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
         /* --- YENİ: YAPAY ZEKA METİN STİLLERİ (DAHA ŞIK VE OKUNABİLİR) --- */
-        .ai-message { background: rgba(128,128,128,0.08); align-self: flex-start; border-bottom-left-radius: 4px; color: var(--ai-text); }
-        .ai-message p { margin: 0 0 10px 0; } .ai-message p:last-child { margin: 0; }
-        .ai-message strong { color: var(--ai-bold); font-weight: 600; } /* Kalın yazılar temaya uygun renklendi */
-        .ai-message ul { padding-left: 20px; margin-top: 10px; margin-bottom: 10px; }
-        .ai-message li { margin-bottom: 8px; } /* Liste elemanları arasına boşluk eklendi */
-        
+        .ai-message {
+            background: rgba(128, 128, 128, 0.08);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            color: var(--ai-text);
+        }
+
+        .ai-message p {
+            margin: 0 0 10px 0;
+        }
+
+        .ai-message p:last-child {
+            margin: 0;
+        }
+
+        .ai-message strong {
+            color: var(--ai-bold);
+            font-weight: 600;
+        }
+
+        /* Kalın yazılar temaya uygun renklendi */
+        .ai-message ul {
+            padding-left: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ai-message li {
+            margin-bottom: 8px;
+        }
+
+        /* Liste elemanları arasına boşluk eklendi */
+
         /* YENİ: DİNAMİK ROZET (BADGE) TASARIMLARI */
-        .badge-alert { background-color: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(239, 68, 68, 0.3); margin-left: 5px; vertical-align: middle;}
-        .badge-success { background-color: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.85em; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-alert {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            margin-left: 5px;
+            vertical-align: middle;
+        }
 
-        .typing-indicator { padding: 12px 20px !important; display: flex; gap: 4px; align-items: center; width: fit-content; }
-        .typing-indicator span { display: inline-block; width: 6px; height: 6px; background-color: var(--text-main); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; opacity: 0.6;}
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .badge-success {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
 
-        #chips-area { padding: 12px 20px; display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; border-top: 1px solid rgba(128,128,128,0.1);}
-        #chips-area::-webkit-scrollbar { height: 6px; }
-        #chips-area::-webkit-scrollbar-track { background: transparent; }
-        #chips-area::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.2); border-radius: 10px; }
-        #chips-area::-webkit-scrollbar-thumb:hover { background: rgba(128,128,128,0.4); }
-        .chip { background: rgba(128,128,128,0.06); border: 1px solid rgba(128,128,128,0.2); border-radius: 16px; padding: 8px 14px; font-size: 0.85em; color: var(--text-main); cursor: pointer; transition: 0.2s; font-family: 'Inter', sans-serif;}
-        .chip:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .typing-indicator {
+            padding: 12px 20px !important;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            width: fit-content;
+        }
 
-        #input-area { display: flex; padding: 10px 20px 20px; gap: 10px; }
-        #user-input { flex: 1; padding: 15px 20px; border: 1px solid rgba(128,128,128,0.3); border-radius: 25px; outline: none; background: transparent; color: var(--text-main); }
-        #send-btn { padding: 0 25px; background: var(--primary); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; }
-        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+        .typing-indicator span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: var(--text-main);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+            opacity: 0.6;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        #chips-area {
+            padding: 12px 20px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-top: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        #chips-area::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        #chips-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #chips-area::-webkit-scrollbar-thumb {
+            background: rgba(128, 128, 128, 0.2);
+            border-radius: 10px;
+        }
+
+        #chips-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(128, 128, 128, 0.4);
+        }
+
+        .chip {
+            background: rgba(128, 128, 128, 0.06);
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            border-radius: 16px;
+            padding: 8px 14px;
+            font-size: 0.85em;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chip:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        #input-area {
+            display: flex;
+            padding: 10px 20px 20px;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            border-radius: 25px;
+            outline: none;
+            background: transparent;
+            color: var(--text-main);
+        }
+
+        #send-btn {
+            padding: 0 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        #mic-btn {
+            padding: 0 20px;
+            background: rgba(128, 128, 128, 0.1);
+            color: var(--text-main);
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        #mic-btn:hover {
+            background: rgba(128, 128, 128, 0.2);
+        }
+
+        #mic-btn.recording {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+            animation: pulse-mic 1.5s infinite;
+        }
+
+        @keyframes pulse-mic {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+        }
+
+        /* --- AUTH EKRANI --- */
+        #auth-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020617;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #f8fafc;
+        }
+
+        .auth-box {
+            background: #0f172a;
+            padding: 40px;
+            border-radius: 20px;
+            width: 350px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-box h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #3b82f6;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #1e293b;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .auth-input:focus {
+            border-color: #3b82f6;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-login {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-login:hover {
+            background: #2563eb;
+        }
+
+        .btn-register {
+            background: transparent;
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+        }
+
+        .btn-register:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .auth-error {
+            color: #ef4444;
+            font-size: 0.85em;
+            text-align: center;
+            margin-bottom: 15px;
+            min-height: 20px;
+        }
+
+        .role-select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #1e293b;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        /* --- MODAL EKRANI --- */
+        #data-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 23, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #0f172a;
+            padding: 25px;
+            border-radius: 16px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            color: #f8fafc;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.25em;
+            font-weight: 700;
+            color: #38bdf8;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #ef4444;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .data-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .data-item {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .data-item.critical {
+            border-left-color: #ef4444;
+        }
+
+        .data-item-title {
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 5px;
+        }
+
+        .data-item-detail {
+            font-size: 0.85em;
+            color: #94a3b8;
+        }
+
+        /* --- BUTON STİLLERİ --- */
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #10b981;
+            color: #ffffff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-top: 15px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            color: #ffffff;
+        }
+
+        .dash-title {
+            justify-content: space-between;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
     </style>
 </head>
+
 <body>
+
+    <div id="auth-container">
+        <div class="auth-box">
+            <h2>KOBİ-Pilot Giriş</h2>
+            <div class="auth-error" id="auth-error"></div>
+            <input type="text" id="auth-username" class="auth-input" placeholder="Kullanıcı Adı" autocomplete="off">
+            <input type="password" id="auth-password" class="auth-input" placeholder="Şifre" autocomplete="off">
+            <select id="auth-role" class="role-select">
+                <option value="musteri">Müşteri Olarak</option>
+                <option value="patron">Patron Olarak</option>
+            </select>
+            <button class="auth-btn btn-login" onclick="login()">Giriş Yap</button>
+            <button class="auth-btn btn-register" onclick="registerUser()">Kayıt Ol</button>
+        </div>
+    </div>
 
     <div id="app-wrapper">
         <div id="dashboard-panel">
-            <div class="dash-title"><i class="fas fa-chart-pie"></i> Copilot Dashboard</div>
+            <div class="dash-title">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-chart-pie"></i> Copilot Dashboard
+                </div>
+                <div class="dash-filters" style="display: flex; gap: 5px;">
+                    <button class="filter-btn active" onclick="setDashboardPeriod('all')">Tümü</button>
+                    <button class="filter-btn" onclick="setDashboardPeriod('bugun')">Bugün</button>
+                    <button class="filter-btn" onclick="setDashboardPeriod('bu-hafta')">Bu Hafta</button>
+                    <button class="filter-btn" onclick="setDashboardPeriod('bu-ay')">Bu Ay</button>
+                </div>
+            </div>
             <div class="cards-grid">
-                <div class="stat-card">
+                <div class="stat-card" onclick="fetchBekleyenKargolar()">
                     <div class="stat-title">Bekleyen Kargo</div>
-                    <div class="stat-value"><span id="dash-orders">0</span> <i class="fas fa-box-open stat-icon"></i></div>
+                    <div class="stat-value"><span id="dash-orders">0</span> <i class="fas fa-box-open stat-icon"></i>
+                    </div>
                     <div class="stat-desc">Aktif siparişler.</div>
                 </div>
-                <div class="stat-card alert">
+                <div class="stat-card alert" onclick="fetchKritikStoklar()">
                     <div class="stat-title">Kritik Stok</div>
-                    <div class="stat-value"><span id="dash-critical-count">0</span> <i class="fas fa-exclamation-triangle stat-icon"></i></div>
+                    <div class="stat-value"><span id="dash-critical-count">0</span> <i
+                            class="fas fa-exclamation-triangle stat-icon"></i></div>
                     <div class="stat-desc" id="dash-critical-list" title="Detaylı görmek için üzerine gelin">-</div>
                 </div>
             </div>
@@ -123,20 +751,38 @@
             <div id="header">
                 <span id="header-title"><i class="fas fa-headset"></i> Müşteri Destek</span>
                 <div class="header-actions">
-                    <button class="icon-btn" onclick="clearChat()" title="Sohbeti Temizle"><i class="fas fa-trash-can"></i></button>
+                    <button class="icon-btn" onclick="clearChat()" title="Sohbeti Temizle"><i
+                            class="fas fa-trash-can"></i></button>
                     <button id="role-btn" onclick="toggleRole()"><i class="fas fa-user-tie"></i> Yönetici Modu</button>
                 </div>
             </div>
-            
+
             <div id="messages">
                 <div class="message ai-message">Merhaba! Ben KOBİ-Pilot. Size nasıl yardımcı olabilirim?</div>
             </div>
-            
+
             <div id="chips-area"></div>
-            
+
             <div id="input-area">
-                <input type="text" id="user-input" placeholder="Yapay zekaya yazın..." onkeypress="handleKeyPress(event)" autocomplete="off">
+                <input type="text" id="user-input" placeholder="Yapay zekaya yazın..."
+                    onkeypress="handleKeyPress(event)" autocomplete="off">
+                <button id="mic-btn" onclick="startDictation()" title="Sesle Yaz"><i class="fas fa-microphone"></i></button>
                 <button id="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA MODAL -->
+    <div id="data-modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Detaylar</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ul class="data-list" id="modal-list">
+                    <!-- Veriler buraya gelecek -->
+                </ul>
             </div>
         </div>
     </div>
@@ -144,23 +790,101 @@
     <script>
         marked.setOptions({ breaks: true });
         let currentRole = "Müşteri";
-        let orderChart; 
+        let orderChart;
+        let dashboardPeriod = "all";
+
+        function setDashboardPeriod(period) {
+            dashboardPeriod = period;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            fetchDashboard();
+        }
 
         const musteriChips = [
-            "🛍️ Neler satıyorsunuz?", 
-            "📦 Sipariş durumumu sorgula", 
-            "❓ Bir ürünün stoğunu sor", 
+            "🛍️ Neler satıyorsunuz?",
+            "📦 Sipariş durumumu sorgula",
+            "❓ Bir ürünün stoğunu sor",
             "🔄 Siparişimi iptal etmek istiyorum"
         ];
         const patronChips = [
-            "📊 Satış analiz raporu ver", 
-            "➕ Sisteme yeni ürün ekle", 
-            "📈 Bir ürünün stoğunu güncelle", 
+            "📊 Satış analiz raporu ver",
+            "➕ Sisteme yeni ürün ekle",
+            "📈 Bir ürünün stoğunu güncelle",
             "🚚 Bir siparişi kargoya ver",
             "✅ Bir siparişi teslim edildi işaretle"
         ];
 
-        window.onload = () => { renderChips(); };
+        async function login() {
+            const u = document.getElementById('auth-username').value;
+            const p = document.getElementById('auth-password').value;
+            const err = document.getElementById('auth-error');
+            err.innerText = "";
+            if (!u || !p) {
+                err.innerText = "Lütfen kullanıcı adı ve şifrenizi girin.";
+                return;
+            }
+            try {
+                const res = await fetch("/login", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: u, password: p, role: "musteri" })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    handleLoginSuccess(data.role);
+                } else {
+                    err.innerText = data.detail || "Giriş başarısız.";
+                }
+            } catch (e) { err.innerText = "Bağlantı hatası."; }
+        }
+
+        async function registerUser() {
+            const u = document.getElementById('auth-username').value;
+            const p = document.getElementById('auth-password').value;
+            const r = document.getElementById('auth-role').value;
+            const err = document.getElementById('auth-error');
+            err.innerText = "";
+            if (!u || !p) {
+                err.innerText = "Kullanıcı adı ve şifre boş olamaz.";
+                return;
+            }
+            try {
+                const res = await fetch("/register", {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: u, password: p, role: r })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    err.style.color = "#10b981";
+                    err.innerText = "Kayıt başarılı. Giriş yapabilirsiniz.";
+                    setTimeout(() => err.style.color = "#ef4444", 3000);
+                } else {
+                    err.innerText = data.detail || "Kayıt başarısız.";
+                }
+            } catch (e) { err.innerText = "Bağlantı hatası."; }
+        }
+
+        function handleLoginSuccess(role) {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('app-wrapper').style.display = 'flex';
+
+            if (role === "patron") {
+                currentRole = "Patron";
+                document.body.classList.add("patron-mode");
+                document.getElementById("header-title").innerHTML = "<i class='fas fa-robot'></i> AI Yönetim Merkezi";
+                document.getElementById("role-btn").style.display = "none";
+                document.getElementById("dashboard-panel").style.display = "flex";
+                renderChips();
+                setTimeout(fetchDashboard, 300);
+            } else {
+                currentRole = "Müşteri";
+                document.body.classList.remove("patron-mode");
+                document.getElementById("header-title").innerHTML = "<i class='fas fa-headset'></i> Müşteri Destek";
+                document.getElementById("role-btn").style.display = "none";
+                document.getElementById("dashboard-panel").style.display = "none";
+                renderChips();
+            }
+            clearChat();
+        }
 
         function initChart() {
             const ctx = document.getElementById('orderChart').getContext('2d');
@@ -177,7 +901,7 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { padding: 15, font: {size: 11} } } } 
+                    plugins: { legend: { position: 'right', labels: { padding: 15, font: { size: 11 } } } }
                 }
             });
         }
@@ -185,17 +909,17 @@
         async function fetchDashboard() {
             if (currentRole !== "Patron") return;
             try {
-                const response = await fetch("/api/dashboard");
+                const response = await fetch(`/api/dashboard?period=${dashboardPeriod}`);
                 const data = await response.json();
-                
+
                 document.getElementById("dash-orders").innerText = data.bekleyen_siparis;
                 document.getElementById("dash-critical-count").innerText = data.kritik_stok_sayisi;
-                
+
                 const criticalList = document.getElementById("dash-critical-list");
                 criticalList.innerText = data.kritik_stok_urunler || "Tüm stoklar yeterli";
                 criticalList.title = data.kritik_stok_urunler || "Tüm stoklar yeterli";
-                
-                if(!orderChart) initChart();
+
+                if (!orderChart) initChart();
                 orderChart.data.datasets[0].data = [
                     data.siparis_dagilimi["Hazırlanıyor"] || 0,
                     data.siparis_dagilimi["Kargoda"] || 0,
@@ -210,7 +934,7 @@
             const container = document.getElementById("chips-area");
             container.innerHTML = "";
             const chips = currentRole === "Müşteri" ? musteriChips : patronChips;
-            
+
             chips.forEach(chipText => {
                 const btn = document.createElement("button");
                 btn.className = "chip";
@@ -223,23 +947,31 @@
             });
         }
 
-        function clearChat() {
+        async function clearChat() {
             const messagesDiv = document.getElementById("messages");
             messagesDiv.innerHTML = "";
-            const welcomeText = currentRole === "Müşteri" 
-                ? "Merhaba! Ben KOBİ-Pilot. Size nasıl yardımcı olabilirim?" 
+            const welcomeText = currentRole === "Müşteri"
+                ? "Merhaba! Ben KOBİ-Pilot. Size nasıl yardımcı olabilirim?"
                 : "Hoş geldin Yönetici. Sistemler aktif, komutlarını bekliyorum.";
             addMessage(welcomeText, "ai-message");
+
+            // İŞTE SİHİR BURADA: Arka plandaki yapay zekanın beynini de sıfırlıyoruz!
+            try {
+                await fetch("/api/temizle");
+                console.log("Arka plan hafızası sıfırlandı, token yükü hafifledi.");
+            } catch (error) {
+                console.error("Hafıza sıfırlanırken hata:", error);
+            }
         }
 
         function toggleRole() {
             if (currentRole === "Müşteri") {
-                currentRole = "Patron"; 
+                currentRole = "Patron";
                 document.body.classList.add("patron-mode");
                 document.getElementById("header-title").innerHTML = "<i class='fas fa-robot'></i> AI Yönetim Merkezi";
                 document.getElementById("role-btn").innerHTML = "<i class='fas fa-user'></i> Müşteri Modu";
                 renderChips();
-                setTimeout(fetchDashboard, 300); 
+                setTimeout(fetchDashboard, 300);
             } else {
                 currentRole = "Müşteri";
                 document.body.classList.remove("patron-mode");
@@ -247,7 +979,7 @@
                 document.getElementById("role-btn").innerHTML = "<i class='fas fa-user-tie'></i> Yönetici Modu";
                 renderChips();
             }
-            clearChat(); 
+            clearChat();
         }
 
         async function sendMessage() {
@@ -257,24 +989,24 @@
 
             addMessage(message, "user-message");
             inputField.value = "";
-            
+
             const messagesDiv = document.getElementById("messages");
             const loadingDiv = document.createElement("div");
-            
+
             loadingDiv.className = "message ai-message typing-indicator";
             loadingDiv.id = "loading-text";
             loadingDiv.innerHTML = "<span></span><span></span><span></span>";
-            
+
             messagesDiv.appendChild(loadingDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
             try {
                 const response = await fetch("/sohbet", {
                     method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ mesaj: message, rol: currentRole }) 
+                    body: JSON.stringify({ mesaj: message, rol: currentRole })
                 });
                 const data = await response.json();
-                
+
                 document.getElementById("loading-text").remove();
                 addMessage(data.ai_cevabi, "ai-message");
 
@@ -290,26 +1022,123 @@
             const messagesDiv = document.getElementById("messages");
             const msgDiv = document.createElement("div");
             msgDiv.className = `message ${className}`;
-            
+
             if (className.includes("ai-message")) {
                 let parsedText = marked.parse(text);
-                
+
                 // Kuru metinleri HTML rozetlere (badge) çeviriyoruz
                 parsedText = parsedText.replace(/\[KRİTİK STOK UYARISI!\]/g, '<span class="badge-alert"><i class="fas fa-exclamation-triangle"></i> Kritik Stok</span>');
                 parsedText = parsedText.replace(/BAŞARILI:/g, '<span class="badge-success"><i class="fas fa-check-circle"></i> Başarılı:</span>');
                 parsedText = parsedText.replace(/HATA:/g, '<span class="badge-alert"><i class="fas fa-times-circle"></i> Hata:</span>');
                 parsedText = parsedText.replace(/İPTAL REDDEDİLDİ:/g, '<span class="badge-alert"><i class="fas fa-ban"></i> İptal Reddedildi:</span>');
-                
+
                 msgDiv.innerHTML = parsedText;
             } else {
                 msgDiv.innerHTML = text; // Kullanıcı mesajları düz metin kalsın
             }
-            
+
             messagesDiv.appendChild(msgDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
         function handleKeyPress(event) { if (event.key === "Enter") sendMessage(); }
+
+        /* --- YENİ: MODAL VE API İŞLEMLERİ --- */
+        function closeModal(event) {
+            if (event && event.target !== document.getElementById('data-modal')) return;
+            document.getElementById('data-modal').style.display = 'none';
+        }
+
+        function showModal(title, items, isCritical = false) {
+            document.getElementById('modal-title').innerText = title;
+            const listObj = document.getElementById('modal-list');
+            listObj.innerHTML = "";
+
+            if (!items || items.length === 0) {
+                listObj.innerHTML = "<li class='data-item'><div class='data-item-title'>Kayıt bulunamadı.</div></li>";
+            } else {
+                items.forEach(item => {
+                    const li = document.createElement("li");
+                    li.className = isCritical ? "data-item critical" : "data-item";
+
+                    let contentHtml = "";
+                    if (isCritical) {
+                        contentHtml = `
+                            <div>
+                                <div class="data-item-title">${item.name}</div>
+                                <div class="data-item-detail">Ürün ID: ${item.id}</div>
+                            </div>
+                            <div style="font-size: 1.2em; font-weight: 700; color: #ef4444;">${item.stock_quantity} Adet</div>
+                        `;
+                    } else {
+                        contentHtml = `
+                            <div>
+                                <div class="data-item-title">${item.product_name}</div>
+                                <div class="data-item-detail">Sipariş ID: ${item.id}</div>
+                            </div>
+                            <div style="font-size: 0.9em; font-weight: 600; background: rgba(59,130,246,0.2); padding: 5px 10px; border-radius: 6px; color: #38bdf8;">${item.status}</div>
+                        `;
+                    }
+                    li.innerHTML = contentHtml;
+                    listObj.appendChild(li);
+                });
+            }
+
+            document.getElementById('data-modal').style.display = 'flex';
+        }
+
+        async function fetchBekleyenKargolar() {
+            if (currentRole !== "Patron") return;
+            try {
+                const res = await fetch("/api/detay/bekleyen-kargolar");
+                const data = await res.json();
+                showModal("Bekleyen Kargolar", data, false);
+            } catch (e) { console.error("Hata:", e); }
+        }
+
+        async function fetchKritikStoklar() {
+            if (currentRole !== "Patron") return;
+            try {
+                const res = await fetch("/api/detay/kritik-stoklar");
+                const data = await res.json();
+                showModal("Kritik Stok Uyarısı", data, true);
+            } catch (e) { console.error("Hata:", e); }
+        }
+
+        function startDictation() {
+            if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = "tr-TR";
+                
+                const micBtn = document.getElementById('mic-btn');
+                micBtn.classList.add('recording');
+
+                recognition.start();
+
+                recognition.onresult = function(e) {
+                    document.getElementById('user-input').value = e.results[0][0].transcript;
+                    recognition.stop();
+                    micBtn.classList.remove('recording');
+                    sendMessage();
+                };
+
+                recognition.onerror = function(e) {
+                    recognition.stop();
+                    micBtn.classList.remove('recording');
+                };
+                
+                recognition.onend = function() {
+                    micBtn.classList.remove('recording');
+                };
+            } else {
+                alert("Tarayıcınız ses tanıma özelliğini desteklemiyor. Lütfen Chrome kullanın.");
+            }
+        }
     </script>
 </body>
+
 </html>
