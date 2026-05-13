@@ -77,5 +77,5 @@ Sistemin otonom karar alma yeteneklerini test etmek için aşağıdaki senaryola
 ## 👥 Geliştirici Ekip
 
 * **Berk Yücedağ**
-* **Asude Yalçın**
+* **Nimet Asude Yalçın**
 * **Senanur Topal**
