@@ -406,6 +406,34 @@
             font-weight: 600;
         }
 
+        #mic-btn {
+            padding: 0 20px;
+            background: rgba(128, 128, 128, 0.1);
+            color: var(--text-main);
+            border: 1px solid rgba(128, 128, 128, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        #mic-btn:hover {
+            background: rgba(128, 128, 128, 0.2);
+        }
+
+        #mic-btn.recording {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+            animation: pulse-mic 1.5s infinite;
+        }
+
+        @keyframes pulse-mic {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
         ::-webkit-scrollbar {
             width: 5px;
         }
@@ -514,37 +542,159 @@
 
         /* --- MODAL EKRANI --- */
         #data-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.8); z-index: 2000; justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 23, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
         }
+
         .modal-content {
-            background: #0f172a; padding: 25px; border-radius: 16px; width: 500px; max-width: 90%;
-            max-height: 80vh; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column; color: #f8fafc;
+            background: #0f172a;
+            padding: 25px;
+            border-radius: 16px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            color: #f8fafc;
         }
+
         .modal-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
         }
-        .modal-title { font-size: 1.25em; font-weight: 700; color: #38bdf8; margin: 0; }
+
+        .modal-title {
+            font-size: 1.25em;
+            font-weight: 700;
+            color: #38bdf8;
+            margin: 0;
+        }
+
         .modal-close {
-            background: none; border: none; color: #94a3b8; font-size: 1.5em; cursor: pointer;
-            transition: color 0.2s; padding: 0; line-height: 1;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0;
+            line-height: 1;
         }
-        .modal-close:hover { color: #ef4444; }
-        .modal-body { flex: 1; overflow-y: auto; padding-right: 5px; }
-        .modal-body::-webkit-scrollbar { width: 6px; }
-        .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        
-        .data-list { list-style: none; padding: 0; margin: 0; }
+
+        .modal-close:hover {
+            color: #ef4444;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .data-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
         .data-item {
-            background: #1e293b; border-radius: 8px; padding: 15px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-left: 4px solid #3b82f6;
         }
-        .data-item.critical { border-left-color: #ef4444; }
-        .data-item-title { font-weight: 600; color: #e2e8f0; margin-bottom: 5px; }
-        .data-item-detail { font-size: 0.85em; color: #94a3b8; }
+
+        .data-item.critical {
+            border-left-color: #ef4444;
+        }
+
+        .data-item-title {
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 5px;
+        }
+
+        .data-item-detail {
+            font-size: 0.85em;
+            color: #94a3b8;
+        }
+
+        /* --- BUTON STİLLERİ --- */
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #10b981;
+            color: #ffffff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-top: 15px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            color: #ffffff;
+        }
+
+        .dash-title {
+            justify-content: space-between;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
     </style>
 </head>
 
@@ -567,7 +717,17 @@
 
     <div id="app-wrapper">
         <div id="dashboard-panel">
-            <div class="dash-title"><i class="fas fa-chart-pie"></i> Copilot Dashboard</div>
+            <div class="dash-title">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-chart-pie"></i> Copilot Dashboard
+                </div>
+                <div class="dash-filters" style="display: flex; gap: 5px;">
+                    <button class="filter-btn active" onclick="setDashboardPeriod('all')">Tümü</button>
+                    <button class="filter-btn" onclick="setDashboardPeriod('bugun')">Bugün</button>
+                    <button class="filter-btn" onclick="setDashboardPeriod('bu-hafta')">Bu Hafta</button>
+                    <button class="filter-btn" onclick="setDashboardPeriod('bu-ay')">Bu Ay</button>
+                </div>
+            </div>
             <div class="cards-grid">
                 <div class="stat-card" onclick="fetchBekleyenKargolar()">
                     <div class="stat-title">Bekleyen Kargo</div>
@@ -606,6 +766,7 @@
             <div id="input-area">
                 <input type="text" id="user-input" placeholder="Yapay zekaya yazın..."
                     onkeypress="handleKeyPress(event)" autocomplete="off">
+                <button id="mic-btn" onclick="startDictation()" title="Sesle Yaz"><i class="fas fa-microphone"></i></button>
                 <button id="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
@@ -630,6 +791,14 @@
         marked.setOptions({ breaks: true });
         let currentRole = "Müşteri";
         let orderChart;
+        let dashboardPeriod = "all";
+
+        function setDashboardPeriod(period) {
+            dashboardPeriod = period;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            fetchDashboard();
+        }
 
         const musteriChips = [
             "🛍️ Neler satıyorsunuz?",
@@ -740,7 +909,7 @@
         async function fetchDashboard() {
             if (currentRole !== "Patron") return;
             try {
-                const response = await fetch("/api/dashboard");
+                const response = await fetch(`/api/dashboard?period=${dashboardPeriod}`);
                 const data = await response.json();
 
                 document.getElementById("dash-orders").innerText = data.bekleyen_siparis;
@@ -884,14 +1053,14 @@
             document.getElementById('modal-title').innerText = title;
             const listObj = document.getElementById('modal-list');
             listObj.innerHTML = "";
-            
+
             if (!items || items.length === 0) {
                 listObj.innerHTML = "<li class='data-item'><div class='data-item-title'>Kayıt bulunamadı.</div></li>";
             } else {
                 items.forEach(item => {
                     const li = document.createElement("li");
                     li.className = isCritical ? "data-item critical" : "data-item";
-                    
+
                     let contentHtml = "";
                     if (isCritical) {
                         contentHtml = `
@@ -914,7 +1083,7 @@
                     listObj.appendChild(li);
                 });
             }
-            
+
             document.getElementById('data-modal').style.display = 'flex';
         }
 
@@ -924,7 +1093,7 @@
                 const res = await fetch("/api/detay/bekleyen-kargolar");
                 const data = await res.json();
                 showModal("Bekleyen Kargolar", data, false);
-            } catch(e) { console.error("Hata:", e); }
+            } catch (e) { console.error("Hata:", e); }
         }
 
         async function fetchKritikStoklar() {
@@ -933,7 +1102,41 @@
                 const res = await fetch("/api/detay/kritik-stoklar");
                 const data = await res.json();
                 showModal("Kritik Stok Uyarısı", data, true);
-            } catch(e) { console.error("Hata:", e); }
+            } catch (e) { console.error("Hata:", e); }
+        }
+
+        function startDictation() {
+            if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = "tr-TR";
+                
+                const micBtn = document.getElementById('mic-btn');
+                micBtn.classList.add('recording');
+
+                recognition.start();
+
+                recognition.onresult = function(e) {
+                    document.getElementById('user-input').value = e.results[0][0].transcript;
+                    recognition.stop();
+                    micBtn.classList.remove('recording');
+                    sendMessage();
+                };
+
+                recognition.onerror = function(e) {
+                    recognition.stop();
+                    micBtn.classList.remove('recording');
+                };
+                
+                recognition.onend = function() {
+                    micBtn.classList.remove('recording');
+                };
+            } else {
+                alert("Tarayıcınız ses tanıma özelliğini desteklemiyor. Lütfen Chrome kullanın.");
+            }
         }
     </script>
 </body>

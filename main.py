@@ -6,7 +6,21 @@ import models
 from database import engine, SessionLocal
 from ai_agent import ai_yanit_ver
 
+from datetime import datetime, timedelta
+import csv
+import io
+from fastapi.responses import Response
+
 models.Base.metadata.create_all(bind=engine)
+
+# Veritabanı Göçü (Migration): Eski siparişlerin tarihi boşsa şu anki tarihi ata
+db = SessionLocal()
+null_orders = db.query(models.Order).filter(models.Order.created_at == None).all()
+for order in null_orders:
+    order.created_at = datetime.utcnow()
+if null_orders:
+    db.commit()
+db.close()
 
 app = FastAPI(title="KOBİ-Pilot")
 
@@ -54,16 +68,30 @@ def login(req: AuthRequest):
         raise HTTPException(status_code=401, detail="Hatalı kullanıcı adı veya şifre.")
     return {"message": "Giriş başarılı", "role": user.role}
 @app.get("/api/dashboard")
-def get_dashboard_data():
+def get_dashboard_data(period: str = "all"):
     db = SessionLocal()
     urunler = db.query(models.Product).all()
-    siparisler = db.query(models.Order).all()
+    
+    query = db.query(models.Order)
+    now = datetime.utcnow()
+    if period == "bugun":
+        start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start_date)
+    elif period == "bu-hafta":
+        start_date = now - timedelta(days=now.weekday())
+        start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start_date)
+    elif period == "bu-ay":
+        start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start_date)
+        
+    siparisler = query.all()
     
     toplam_siparis = len(siparisler)
     bekleyen_siparis = len([s for s in siparisler if s.status not in ["Teslim Edildi", "İptal"]])
     kritik_stok = [u.name for u in urunler if u.stock_quantity <= 5]
     
-    # YENİ: Grafik için sipariş durumlarının dağılımını hesaplıyoruz
+    # Grafik için sipariş durumlarının dağılımını hesaplıyoruz
     durumlar = {"Hazırlanıyor": 0, "Kargoda": 0, "Teslim Edildi": 0, "İptal": 0}
     for s in siparisler:
         if s.status in durumlar:
@@ -104,6 +132,41 @@ def get_kritik_stoklar():
     db.close()
     
     return [{"id": p.id, "name": p.name, "stock_quantity": p.stock_quantity} for p in products]
+
+@app.get("/api/export/orders")
+def export_orders(period: str = "all"):
+    db = SessionLocal()
+    query = db.query(models.Order, models.Product.name)\
+              .join(models.Product, models.Order.product_id == models.Product.id)
+    
+    now = datetime.utcnow()
+    if period == "bugun":
+        start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start_date)
+    elif period == "bu-hafta":
+        start_date = now - timedelta(days=now.weekday())
+        start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start_date)
+    elif period == "bu-ay":
+        start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        query = query.filter(models.Order.created_at >= start_date)
+        
+    orders = query.all()
+    db.close()
+    
+    output = io.StringIO()
+    output.write('\ufeff') # Türkçe karakter (BOM) desteği
+    writer = csv.writer(output, delimiter=';') # Sütunları bölmek için noktalı virgül
+    writer.writerow(["Sipariş ID", "Ürün Adı", "Durum", "Tarih"])
+    
+    for order, product_name in orders:
+        date_str = order.created_at.strftime("%Y-%m-%d %H:%M:%S") if order.created_at else ""
+        writer.writerow([order.id, product_name, order.status, date_str])
+        
+    # Daha önce StreamingResponse eklendiği varsayılıyor ancak import listesinde hala Response kullanılmış.
+    # Ben StreamingResponse veya Response ile dönmeyi koruyacağım, kullanıcının kodunu aynen devam ettiriyorum:
+    output.seek(0)
+    return Response(content=output.getvalue(), media_type="text/csv", headers={"Content-Disposition": f"attachment; filename=orders_{period}.csv"})
 
 @app.post("/sohbet")
 def sohbet_et(istek: MesajIstegi):

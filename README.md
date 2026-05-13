@@ -1,78 +1,81 @@
-# 🚀 KOBİ-Pilot: Otonom AI İşletme Yönetimi & Copilot
+# 🚀 KOBİ-Pilot: Yapay Zeka Destekli Otonom İşletme Asistanı
 
-Küçük ve orta ölçekli işletmeler (KOBİ'ler) için tasarlanmış; müşteri iletişimini, stok takibini ve operasyonel süreçleri **sadece doğal dil (sohbet) kullanarak** yöneten yeni nesil "Aksiyon Odaklı" Yapay Zeka Ajanı (AI Agent).
+![Python](https://img.shields.io/badge/Python-3.11+-blue.svg) ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg) ![Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-orange.svg) ![Chart.js](https://img.shields.io/badge/Chart.js-Data_Viz-pink.svg)
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue.svg) ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg) ![Gemini](https://img.shields.io/badge/Google_Gemini-Agent-orange.svg) 
+## 📖 Proje Hakkında
 
----
-
-## 💡 Neden KOBİ-Pilot? (Farkımız Nedir?)
-
-Hackathon gereksinimlerini incelerken, piyasadaki standart çözümlerin sadece **"bilgi veren" (Soru-Cevap) chatbotlar** olduğunu fark ettik. KOBİ-Pilot ise sıradan bir chatbot değildir; veritabanı ile konuşabilen, karar alabilen ve sistemi güncelleyen **otonom bir çalışandır**.
-
-**Fark Yaratan Özelliklerimiz:**
-1. 🎭 **Çift Karakterli Mimari (Dual-Persona):**
-   * **Müşteri Modu:** Harika bir satış danışmanıdır. Müşteriye ürün önerir (RAG benzeri mantık), iptal taleplerini alır. Ürün kargodaysa otonom olarak iade kodu üretir. ASLA yetkisi dışına çıkıp stok değiştiremez.
-   * **Patron Modu:** Tam yetkili operasyon müdürüdür. Sisteme yeni ürün ekler, stok günceller, kargo durumlarını değiştirir ve genel veri analizi yapar.
-2. ⚡ **Dinamik Hibrit Dashboard:**
-   * Ekran sadece bir sohbet kutusu değildir. Patron modunda ekran genişler ve **Chart.js** destekli, gerçek zamanlı bir kontrol paneli açılır.
-   * *Sihir burada:* Yapay zekaya sohbetten bir komut verdiğinizde (Örn: "1 nolu siparişi kargoya ver"), yapay zeka işlemi yapar ve **ekrandaki grafikler sayfa yenilenmeden canlı olarak güncellenir.**
-3. 🛠️ **Function Calling (Aksiyon Alma):**
-   * LLM sadece metin üretmez. `google-generativeai` tool mantığı ile CRUD (Create, Read, Update, Delete) operasyonlarını otonom yürütür.
+**KOBİ-Pilot**, küçük ve orta ölçekli işletmelerin (KOBİ'ler) stok, sipariş ve müşteri ilişkilerini tamamen otonom bir şekilde yönetmelerini sağlayan yeni nesil bir **SaaS platformudur**. Standart soru-cevap botlarının aksine, gücünü **Google Gemini 2.5 Flash API**'den alan KOBİ-Pilot, veritabanı ile doğrudan konuşabilir, kararlar alabilir ve işletme operasyonlarını (CRUD) sizin adınıza yürüten otonom bir dijital çalışan gibi hareket eder.
 
 ---
 
-## 🛠️ Kullanılan Teknolojiler
+## ✨ Öne Çıkan Özellikler
 
-* **Yapay Zeka:** Google Gemini 1.5 Flash (Hızlı, fonksiyon çağırma kapasitesi yüksek)
-* **Backend:** FastAPI, Uvicorn (Asenkron, yüksek performanslı API)
-* **Veritabanı:** SQLAlchemy (SQLite - Hızlı prototipleme için)
-* **Frontend:** Saf HTML/CSS, Vanilla JS, Chart.js, FontAwesome
+* 🎭 **Rol Bazlı Yönetim (Dual-Persona):** 
+  * **Patron Modu:** Tam yetkili işletme yöneticisidir. Sisteme yeni ürün ekler, stok günceller, sipariş durumlarını değiştirir ve genel veri analizlerini otonom olarak yapar.
+  * **Müşteri Modu:** Harika bir satış danışmanıdır. Müşteriye ürün önerir, iptal taleplerini değerlendirir. Ürün kargodaysa iptali reddedip otonom olarak iade kodu üretir; yetkisi dışına çıkıp asla stok/ürün manipülasyonu yapmaz.
+* 🤖 **Otonom Agent (Function Calling):** Doğal dil (sohbet) kullanılarak verilen komutları anlar, gerekli API/Veritabanı araçlarını tetikler ve işlemleri insan müdahalesi olmadan gerçekleştirir.
+* 📊 **İnteraktif Dashboard:** Chart.js ile görselleştirilmiş canlı veri grafikleri. "Kritik Stok" veya "Bekleyen Kargo" gibi tıklanabilir durum kartları ile anlık operasyonel detayları gösterir. Sayfa yenilenmeden, yapay zekanın yaptığı işlemler anında grafiklere yansır.
+* 🎙️ **Sesli Komut (Voice-to-Text):** Entegre Web Speech API sayesinde klavyeye ihtiyaç duymadan, eller serbest (hands-free) bir şekilde doğal dil komutlarınızı sisteme iletebilirsiniz.
+* 📈 **Akıllı Raporlama:** "Bugünkü satışları raporla" gibi komutlarla Günlük/Haftalık/Aylık özetler çıkarır. Ek olarak, Türkçe Excel uyumluluğu için BOM (Byte Order Mark) destekli, dinamik bir **CSV dışa aktarma (Export)** butonu sunar.
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma (Jüri Testi İçin)
+## 🛠️ Teknoloji Yığını (Tech Stack)
 
-Projeyi kendi bilgisayarınızda saniyeler içinde ayağa kaldırabilirsiniz.
+### Backend & AI
+* **Dil & Framework:** Python, FastAPI, Uvicorn
+* **Veritabanı:** SQLAlchemy & SQLite (Hızlı prototipleme için)
+* **Yapay Zeka:** Google Gemini SDK (Gemini 2.5 Flash)
+
+### Frontend
+* **Core:** HTML5, Vanilla JavaScript, CSS3
+* **Tasarım Dili:** Modern Dark SaaS Theme, Responsive UI
+* **Araçlar & Kütüphaneler:** Chart.js (Veri Görselleştirme), FontAwesome (İkonlar), Marked.js (Markdown Parse)
+
+---
+
+## 🚀 Kurulum ve Çalıştırma
+
+Projeyi yerel ortamınızda saniyeler içinde ayağa kaldırabilir, yapay zekanın gücünü hemen test edebilirsiniz.
 
 **1. Projeyi Klonlayın:**
 ```bash
-git clone [https://github.com/KULLANICI_ADIN/kobi-pilot.git](https://github.com/KULLANICI_ADIN/kobi-pilot.git)
+git clone https://github.com/KULLANICI_ADIN/kobi-pilot.git
 cd kobi-pilot
 ```
 
 **2. Gerekli Kütüphaneleri Kurun:**
 ```bash
-pip install fastapi uvicorn sqlalchemy google-generativeai python-dotenv pydantic marked
+pip install -r requirements.txt
 ```
 
 **3. API Anahtarını Ekleyin:**
-* Proje ana dizininde bir `.env` dosyası oluşturun.
-* İçine Google Gemini API anahtarınızı ekleyin:
-  `GEMINI_API_KEY=sizin_api_anahtariniz_buraya`
+Proje ana dizininde bir `.env` dosyası oluşturun ve içerisine Google Gemini API anahtarınızı ekleyin:
+```env
+GEMINI_API_KEY=sizin_api_anahtariniz_buraya
+```
 
 **4. Sunucuyu Başlatın:**
 ```bash
 uvicorn main:app --reload
 ```
-*Tarayıcınızda `http://127.0.0.1:8000` adresine gidin.*
+*Tarayıcınızda `http://127.0.0.1:8000` adresine giderek uygulamayı kullanmaya başlayabilirsiniz.*
 
 ---
 
-## 🎯 Jüri Demo Senaryoları (Bunları Deneyin!)
+## 🎯 Jüri Demo Senaryoları
 
-Projemizin gücünü görmek için arayüzde şu komutları test edebilirsiniz:
+Sistemin otonom karar alma yeteneklerini test etmek için aşağıdaki senaryoları deneyebilirsiniz:
 
-**Senaryo 1: Satış Danışmanı (Müşteri Modunda)**
-*   💬 *Kullanıcı:* "Kahvaltı için sizden ürün almak istiyorum, birbirine uyan ne önerirsiniz?"
-*   🤖 *Beklenen AI Tepkisi:* Veritabanı kataloğunu (katalog_getir aracı) çeker ve uygun ürünleri pazarlayarak sunar.
+1. **Satış Danışmanı (Müşteri Modunda):** "Bana güzel bir kahvaltılık ürün önerebilir misin?" diyerek RAG benzeri ürün öneri mantığını test edin.
+2. **Otonom İade Kontrolü (Müşteri Modunda):** Kargoya verilmiş bir siparişi iptal etmeyi deneyin. Sistem iptali reddedip akıllı bir iade kodu (Örn: `IADE-4821`) üretecektir.
+3. **Aksiyon ve Dashboard Senkronizasyonu (Patron Modunda):** Mikrofonu kullanarak sesli komutla "Sisteme yeni bir ürün ekle: Köy Tereyağı, stok 50 adet" deyin. İşlem tamamlandığında dashboard'un anında güncellendiğini görün.
+4. **Akıllı CSV Raporlama (Patron Modunda):** "Bugünkü siparişleri indir" komutunu verin. Yapay zekanın oluşturduğu butona tıklayarak Türkçe karakter destekli CSV dosyanızı dışa aktarın.
 
-**Senaryo 2: Otonom İade Kontrolü (Müşteri Modunda)**
-*   *(Önce patron modunda bir siparişi kargoya verilmiş yapın)*
-*   💬 *Kullanıcı:* "Siparişimi iptal etmek istiyorum."
-*   🤖 *Beklenen AI Tepkisi:* Siparişin kargoda olduğunu tespit eder, iptali reddeder ve otonom bir iade kodu (`IADE-4821`) üreterek müşteriye verir.
+---
 
-**Senaryo 3: Aksiyon ve Dashboard Senkronizasyonu (Patron Modunda)**
-*   *(Patron Moduna geçin, soldaki grafiklerin açıldığını görün)*
-*   💬 *Kullanıcı:* "Sisteme yeni bir ürün ekle: Köy Tereyağı, stok 50 adet."
-*   🤖 *Beklenen AI Tepkisi:* Veritabanına ürünü ekler ve sol taraftaki "Sistemdeki Toplam Ürün" sayısı anında güncellenir.
+## 👥 Geliştirici Ekip
+
+* **Berk Yücedağ**
+* **Asude Yalçın**
+* **Senanur Topal**

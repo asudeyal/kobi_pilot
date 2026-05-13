@@ -15,6 +15,7 @@ class Order(Base):
     id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer, ForeignKey("products.id"))
     status = Column(String, default="Hazırlanıyor")
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 class User(Base):
     __tablename__ = "users"
